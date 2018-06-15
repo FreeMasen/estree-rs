@@ -1,7 +1,7 @@
 use super::Identifier;
 
 pub struct Pattern {
-    data: PatternData,
+    pub data: PatternData,
 }
 
 pub enum PatternData {

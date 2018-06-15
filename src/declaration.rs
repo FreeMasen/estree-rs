@@ -3,7 +3,7 @@ use pattern::Pattern;
 use super::{Function, Identifier};
 
 pub struct Declaration {
-    data: DeclarationData,
+    pub data: DeclarationData,
 }
 
 pub enum DeclarationData {
@@ -12,18 +12,18 @@ pub enum DeclarationData {
 }
 
 pub struct FunctionDeclaration {
-    id: Identifier,
-    func: Function,
+    pub id: Identifier,
+    pub func: Function,
 }
 
 pub struct VariableDeclaration {
-    declaration: Vec<VariableDeclarator>,
-    kind: VariableKind,
+    pub declaration: Vec<VariableDeclarator>,
+    pub kind: VariableKind,
 }
 
 pub struct VariableDeclarator {
-    id: Pattern,
-    init: Option<Expression>,
+    pub id: Pattern,
+    pub init: Option<Expression>,
 }
 
 pub enum VariableKind {

@@ -3,10 +3,10 @@ use declaration::Declaration;
 use pattern::Pattern;
 use super::{Identifier, Literal};
 pub struct Statement {
-    data: StatementData,
+    pub data: StatementData,
 }
 
-enum StatementData {
+pub enum StatementData {
     Expression(Expression),
     Directive(Directive),
     Block(Block),
@@ -31,8 +31,8 @@ enum StatementData {
 }
 
 pub struct Directive {
-    expression: Literal,
-    directive: String,
+    pub expression: Literal,
+    pub directive: String,
 } 
 
 pub enum Block {
@@ -41,73 +41,73 @@ pub enum Block {
 }
 
 pub struct With {
-    object: Expression,
-    body: Box<Statement>,
+    pub object: Expression,
+    pub body: Box<Statement>,
 }
 
 pub struct Return {
-    argument: Option<Expression>,
+    pub argument: Option<Expression>,
 }
 
 pub struct Labeled {
-    label: Identifier,
-    body: Box<Statement>,
+    pub label: Identifier,
+    pub body: Box<Statement>,
 }
 
 pub struct Break {
-    label: Option<Identifier>,
+    pub label: Option<Identifier>,
 }
 
 pub struct Continue {
-    label: Option<Identifier>,
+    pub label: Option<Identifier>,
 }
 
 pub struct If {
-    test: Expression,
-    consequence: Box<Statement>,
-    alternate: Box<Option<Statement>>,
+    pub test: Expression,
+    pub consequence: Box<Statement>,
+    pub alternate: Box<Option<Statement>>,
 }
 
 pub struct Switch {
-    discriminant: Expression,
-    cases: Vec<SwitchCase>,
+    pub discriminant: Expression,
+    pub cases: Vec<SwitchCase>,
 }
 
 pub struct SwitchCase {
-    test: Option<Expression>,
-    consequent: Vec<Statement>,
+    pub test: Option<Expression>,
+    pub consequent: Vec<Statement>,
 }
 
 pub struct Throw {
-    argument: Expression,
+    pub argument: Expression,
 }
 
 pub struct Try {
-    block: Block,
-    handler: Option<Catch>,
-    finalizer: Option<Block>,
+    pub block: Block,
+    pub handler: Option<Catch>,
+    pub finalizer: Option<Block>,
 }
 
 pub struct Catch {
-    param: Pattern,
-    body: Block,
+    pub param: Pattern,
+    pub body: Block,
 }
 
 pub struct While {
-    test: Expression,
-    body: Box<Statement>,
+    pub test: Expression,
+    pub body: Box<Statement>,
 }
 
 pub struct DoWhile {
-    body: Box<Statement>,
-    test: Expression,
+    pub body: Box<Statement>,
+    pub test: Expression,
 }
 
 pub struct For {
-    init: ForInit,
-    test: Option<Expression>,
-    update: Option<Expression>,
-    body: Box<Statement>,
+    pub init: ForInit,
+    pub test: Option<Expression>,
+    pub update: Option<Expression>,
+    pub body: Box<Statement>,
 }
 
 pub enum ForInit {
@@ -117,9 +117,9 @@ pub enum ForInit {
 }
 
 pub struct ForIn {
-    left: ForInLeft,
-    right: Expression,
-    body: Box<Statement>
+    pub left: ForInLeft,
+    pub right: Expression,
+    pub body: Box<Statement>
 }
 
 pub enum ForInLeft {

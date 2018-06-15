@@ -9,7 +9,7 @@ use pattern::Pattern;
 use statement::{Statement, Directive};
 
 pub struct Node {
-    data: NodeData,
+    pub data: NodeData,
 }
 
 pub enum NodeData {
@@ -24,11 +24,11 @@ pub enum NodeData {
 }
 
 pub struct Identifier {
-    name: String,
+    pub name: String,
 }
 
 pub struct Literal {
-    value: LiteralValue,
+    pub value: LiteralValue,
 }
 
 pub enum LiteralValue {
@@ -40,14 +40,14 @@ pub enum LiteralValue {
 }
 
 pub struct RegEx {
-    pattern: String,
-    flags: String,
+    pub pattern: String,
+    pub flags: String,
 }
 
 pub struct Program {
-    id: Identifier,
-    params: Vec<Pattern>,
-    body: ProgramBody,
+    pub id: Identifier,
+    pub params: Vec<Pattern>,
+    pub body: ProgramBody,
 }
 
 pub enum ProgramBody {
@@ -56,13 +56,13 @@ pub enum ProgramBody {
 }
 
 pub struct Function {
-    id: Option<Identifier>,
-    params: Vec<Pattern>,
-    body: FunctionBody,
+    pub id: Option<Identifier>,
+    pub params: Vec<Pattern>,
+    pub body: FunctionBody,
 }
 
 pub struct FunctionBody {
-    body: Vec<FunctionBodyData>
+    pub body: Vec<FunctionBodyData>
 }
 
 pub enum FunctionBodyData {

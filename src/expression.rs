@@ -1,7 +1,7 @@
 use super::{Pattern, Identifier, Literal, Function};
 
 pub struct Expression {
-    data: ExpressionData
+    pub data: ExpressionData
 }
 
 pub enum ExpressionData {
@@ -22,17 +22,17 @@ pub enum ExpressionData {
 }
 
 pub struct Array {
-    elements: Vec<Option<Expression>>,
+    pub elements: Vec<Option<Expression>>,
 }
 
 pub struct Object {
-    properties: Vec<Property>,
+    pub properties: Vec<Property>,
 }
 
 pub struct Property {
-    key: PropertyKey,
-    value: Box<Expression>,
-    kind: PropertyKind,
+    pub key: PropertyKey,
+    pub value: Box<Expression>,
+    pub kind: PropertyKind,
 }
 
 pub enum PropertyKey {
@@ -47,9 +47,9 @@ pub enum PropertyKind {
 }
 
 pub struct Unary {
-    operator: UnaryOperator,
-    prefix: bool,
-    argument: Box<Expression>
+    pub operator: UnaryOperator,
+    pub prefix: bool,
+    pub argument: Box<Expression>
 }
 
 pub enum UnaryOperator {
@@ -92,9 +92,9 @@ pub enum UnaryOperator {
 }
 
 pub struct Update {
-    operator: UpdateOperator,
-    argument: Box<Expression>,
-    prefix: bool,
+    pub operator: UpdateOperator,
+    pub argument: Box<Expression>,
+    pub prefix: bool,
 }
 
 pub enum UpdateOperator {
@@ -105,9 +105,9 @@ pub enum UpdateOperator {
 }
 
 pub struct Binary {
-    operator: BinaryOperator,
-    left: Box<Expression>,
-    right: Box<Expression>,
+    pub operator: BinaryOperator,
+    pub left: Box<Expression>,
+    pub right: Box<Expression>,
 }
 
 pub enum BinaryOperator {
@@ -156,9 +156,9 @@ pub enum BinaryOperator {
 }
 
 pub struct Assignment {
-    operator: AssignmentOperator,
-    left: Box<AssignmentData>,
-    right: Box<Expression>,
+    pub operator: AssignmentOperator,
+    pub left: Box<AssignmentData>,
+    pub right: Box<Expression>,
 }
 
 pub enum AssignmentOperator {
@@ -194,9 +194,9 @@ pub enum AssignmentData {
 }
 
 pub struct Logical {
-    operator: LogicalOperator,
-    left: Box<Expression>,
-    right: Box<Expression>,
+    pub operator: LogicalOperator,
+    pub left: Box<Expression>,
+    pub right: Box<Expression>,
 }
 
 pub enum LogicalOperator {
@@ -207,27 +207,27 @@ pub enum LogicalOperator {
 }
 
 pub struct Member {
-    object: Box<Expression>,
-    property: Box<Expression>,
-    computed: bool,
+    pub object: Box<Expression>,
+    pub property: Box<Expression>,
+    pub computed: bool,
 }
 
 pub struct Conditional {
-    test: Box<Expression>,
-    alternate: Box<Expression>,
-    consequent: Box<Expression>,
+    pub test: Box<Expression>,
+    pub alternate: Box<Expression>,
+    pub consequent: Box<Expression>,
 }
 
 pub struct Call {
-    callee: Box<Expression>,
-    arguments: Vec<Expression>,
+    pub callee: Box<Expression>,
+    pub arguments: Vec<Expression>,
 }
 
 pub struct New {
-    callee: Box<Expression>,
-    arguments: Vec<Expression>,
+    pub callee: Box<Expression>,
+    pub arguments: Vec<Expression>,
 }
 
 pub struct Sequence {
-    expressions: Vec<Expression>,
+    pub expressions: Vec<Expression>,
 }
