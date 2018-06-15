@@ -3,4 +3,8 @@ name = "estree-rs"
 version = "0.1.0"
 authors = ["Robert Masen <r@robertmasen.pizza>"]
 
+[features]
+debug = []
+
+
 [dependencies]
