@@ -1,124 +1,194 @@
-pub mod expression;
-pub mod statement;
-pub mod declaration;
-pub mod pattern;
-
-use declaration::{Declaration, ModuleDeclaration};
-use expression::Expression;
-use pattern::Pattern;
-use statement::{Statement, Directive};
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub struct Node {
-    pub data: NodeData,
+pub trait Node {
+    fn kind(&self) -> NodeKind;
+    fn location(&self) -> Location;
 }
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub enum NodeData {
-    Identifier(Identifier),
-    Literal(Literal),
-    Program(Program),
-    Function(Function),
-    Statement(Statement),
-    Declaration(Declaration),
-    Expression(Expression),
-    Pattern(Pattern),
+pub enum NodeKind {
+    Identifier,
+    Literal(LiteralKind),
+    Program,
+    Function(FunctionKind),
+    Statement(StatementKind),
+    Decl(DeclKind),
+    Expr(ExprKind),
+    Pattern(PatternKind),
     Super,
-    SpreadElement(SpreadElement),
-    TemplateElement(TemplateElement),
+    SpreadElement,
+    Template(TemplateKind),
+    CatchClause
 }
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub struct Identifier(String);
-
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub struct Literal {
-    pub value: LiteralValue,
-}
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub enum LiteralValue {
-    String(String),
-    Bool(bool),
+pub enum LiteralKind {
+    String,
+    Boolean,
     Null,
-    Number(f32),
-    RegEx(RegEx),
-    Template(Template)
+    Number,
+    RegEx,
 }
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub struct RegEx {
-    pub pattern: String,
-    pub flags: String,
+pub enum FunctionKind {
+    Expr,
+    Decl,
 }
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub struct Program {
-    pub body: Vec<ProgramBodyPart>,
+pub enum StatementKind {
+    Expr,
+    Block,
+    Empty,
+    Debugger,
+    With,
+    Return,
+    Labeled,
+    Break,
+    Continue,
+    If,
+    Switch,
+    Throw,
+    Try,
+    While,
+    DoWhile,
+    For,
+    ForIn,
+    ForOf,
 }
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub enum ProgramBodyPart {
-    Directive(Directive),
-    Statement(Statement),
-    Declaration(ModuleDeclaration),
+pub enum DeclKind {
+    Func,
+    Var,
 }
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub struct Function {
-    pub id: Option<Identifier>,
-    pub params: Vec<Pattern>,
-    pub body: FunctionBody,
-    pub generator: bool,
-    pub async: bool,
+pub enum ExprKind {
+    This,
+    Array,
+    Object,
+    Function,
+    Unary,
+    Update,
+    Binary,
+    Assignment,
+    Logical,
+    Member,
+    Conditional,
+    Call,
+    New,
+    Sequence,
 }
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub struct FunctionBody {
-    pub body: Vec<FunctionBodyPart>
+pub enum PatternKind {
+
 }
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub enum FunctionBodyPart {
-    Directive(Directive),
-    Statement(Statement),
+pub enum TemplateKind {
+
 }
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub struct SpreadElement {
-    argument: Box<Expression>,
+#[derive(Clone)]
+pub struct Location {
+    pub start: Position,
+    pub end: Position
 }
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub struct Template {
-    pub quasis: Vec<TemplateElement>,
-    pub expression: Vec<Expression>,
+impl Location {
+    pub fn new(start: Position, end: Position) -> Self {
+        Location {
+            start,
+            end
+        }
+    }
 }
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub struct TaggedTemplateExpression {
-    pub tag: Expression,
-    pub quasi: Template,
+#[derive(Clone)]
+pub struct Position {
+    pub line: usize,
+    pub column: usize,
 }
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub struct TemplateElement {
-    pub tail: bool,
-    pub value: TemplateElementValue,
+impl Position {
+    pub fn new(line: usize, column: usize) -> Self {
+        Position {
+            line,
+            column,
+        }
+    }
 }
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub struct TemplateElementValue {
-    pub cooked: Option<String>,
-    pub raw: String,
+pub struct Identifier {
+    pub name: String,
+    location: Location,
 }
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub struct Class {
-    pub id: Option<Identifier>,
-    pub super_class: Option<Expression>,
-    pub body: ClassBody,
+impl Node for Identifier {
+    fn kind(&self) -> NodeKind {
+        NodeKind::Identifier
+    }
+    fn location(&self) -> Location {
+        self.location.clone()
+    }
 }
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub struct ClassBody {
-    pub body: Vec<MethodDefinition>,
+pub trait Literal<T: Clone> {
+    fn value(&self) -> T;
 }
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub struct MethodDefinition {
-    pub key: Expression,
-    pub value: Expression,
-    pub kind: MethodKind,
-    pub computed: bool,
-    pub is_static: bool,
+#[derive(Clone)]
+struct StringLit {
+    quote: QuoteKind,
+    content: String,
 }
-#[cfg_attr(feature = "debug", derive(Debug))]
-pub enum MethodKind {
-    Constructor,
-    Method,
-    Get,
-    Set,
+#[derive(Clone)]
+pub enum QuoteKind {
+    Single,
+    Double,
+}
+
+pub trait Number<T: Clone>: Literal<T> {
+    fn sign(&self) -> Option<Sign>;
+}
+#[derive(Clone)]
+pub enum Sign {
+    Positive,
+    Negative,
+}
+impl<'a> Into<char> for &'a Sign {
+    fn into(self) -> char {
+        match self {
+            &Sign::Positive => '+',
+            &Sign::Negative => '-',
+        }
+    }
+}
+#[derive(Clone)]
+pub enum NumberLiteral {
+    Binary(Sign, CharCase, usize),
+    Octal(Sign, CharCase, usize),
+    Hex(Sign, CharCase, usize),
+    Decimal(DecimalLiteral)
+}
+impl Literal<String> for NumberLiteral {
+    fn value(&self) -> String {
+        let mut ret = String::new();
+        match self {
+            &NumberLiteral::Binary(sign, case, value) => {
+                if let Some(ref s) = sign {
+                    ret.push(s.into());
+                }
+                ret.push(match case {
+                    CharCase::Upper => 'B',
+                    CharCase::Lower => 'b',
+                });
+                
+            }
+            &NumberLiteral::Octal(sign, case, value) => {
+
+            }
+            &NumberLiteral::Hex(sign, case, value) => {
+
+            }
+            &NumberLiteral::Decimal(sign, case, value) => {
+
+            }
+        }
+        ret
+    }
+}
+#[derive(Clone)]
+pub struct DecimalLiteral {
+    sign: Option<Sign>,
+    pub integer: Option<usize>,
+    pub remainder: Option<usize>,
+    pub exp: Option<Exponent>,
+}
+#[derive(Clone)]
+pub struct Exponent {
+    pub case: CharCase,
+    pub value: usize,
+}
+#[derive(Clone)]
+pub enum CharCase {
+    Upper,
+    Lower,
 }
