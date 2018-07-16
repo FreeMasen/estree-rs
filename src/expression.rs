@@ -1,4 +1,6 @@
-use super::{Pattern, Identifier, Literal, Function};
+use super::{Pattern, Identifier, Literal, 
+            Function, FunctionBody, SpreadElement, 
+            Template, TaggedTemplateExpression, Class};
 
 #[cfg_attr(feature = "debug", derive(Debug))]
 pub struct Expression {
@@ -20,19 +22,28 @@ pub enum ExpressionData {
     Call(Call),
     New(New),
     Sequence(Sequence),
+    ArrowFunctionExpression(ArrowFunctionExpression),
+    YieldExpression(YieldExpression),
+    Template(Template),
+    Class(Box<Class>),
+    MetaProperty(MetaProperty),
+    Await(AwaitExpression),
 }
 #[cfg_attr(feature = "debug", derive(Debug))]
 pub struct Array {
-    pub elements: Vec<Option<Expression>>,
+    pub elements: Vec<Option<ExprOrSpread>>,
 }
 #[cfg_attr(feature = "debug", derive(Debug))]
 pub struct Object {
-    pub properties: Vec<Property>,
+    pub properties: Vec<PropOrSpread>,
 }
 #[cfg_attr(feature = "debug", derive(Debug))]
 pub struct Property {
-    pub key: PropertyKey,
-    pub value: Box<Expression>,
+    pub key: Box<Expression>,
+    pub method: bool,
+    pub shorthand: bool,
+    pub computed: bool,
+    pub value: Box<PropertyValue>,
     pub kind: PropertyKind,
 }
 #[cfg_attr(feature = "debug", derive(Debug))]
@@ -45,6 +56,16 @@ pub enum PropertyKind {
     Init,
     Get,
     Set,
+}
+#[cfg_attr(feature = "debug", derive(Debug))]
+pub enum PropertyValue {
+    Expression(Expression),
+    Pattern(Pattern),
+}
+#[cfg_attr(feature = "debug", derive(Debug))]
+pub enum PropOrSpread {
+    Prop(Property),
+    Spread(SpreadElement),
 }
 #[cfg_attr(feature = "debug", derive(Debug))]
 pub struct Unary {
@@ -154,6 +175,8 @@ pub enum BinaryOperator {
     In,
     /// instanceof
     InstanceOf,
+    /// **
+    Exponent,
 }
 #[cfg_attr(feature = "debug", derive(Debug))]
 pub struct Assignment {
@@ -187,6 +210,8 @@ pub enum AssignmentOperator {
     XOrEqual,
     /// &=
     AndEqual,
+    /// **=
+    ExponentEqual,
 }
 #[cfg_attr(feature = "debug", derive(Debug))]
 pub enum AssignmentData {
@@ -208,7 +233,7 @@ pub enum LogicalOperator {
 }
 #[cfg_attr(feature = "debug", derive(Debug))]
 pub struct Member {
-    pub object: Box<Expression>,
+    pub object: Box<ExprOrSuper>,
     pub property: Box<Expression>,
     pub computed: bool,
 }
@@ -220,15 +245,55 @@ pub struct Conditional {
 }
 #[cfg_attr(feature = "debug", derive(Debug))]
 pub struct Call {
-    pub callee: Box<Expression>,
-    pub arguments: Vec<Expression>,
+    pub callee: Box<ExprOrSuper>,
+    pub arguments: Vec<ExprOrSpread>,
 }
 #[cfg_attr(feature = "debug", derive(Debug))]
 pub struct New {
     pub callee: Box<Expression>,
-    pub arguments: Vec<Expression>,
+    pub arguments: Vec<ExprOrSpread>,
 }
 #[cfg_attr(feature = "debug", derive(Debug))]
 pub struct Sequence {
     pub expressions: Vec<Expression>,
+}
+#[cfg_attr(feature = "debug", derive(Debug))]
+pub enum ExprOrSuper {
+    Expression(Expression),
+    Super
+}
+
+#[cfg_attr(feature = "debug", derive(Debug))]
+pub enum ExprOrSpread {
+    Expression(Expression),
+    Spread(SpreadElement)
+}
+#[cfg_attr(feature = "debug", derive(Debug))]
+pub struct ArrowFunctionExpression {
+    pub body: Box<ExprOrFuncBody>,    
+    pub expression: bool,
+}
+#[cfg_attr(feature = "debug", derive(Debug))]
+pub enum ExprOrFuncBody {
+    Expr(Expression),
+    FuncBody(FunctionBody),
+}
+#[cfg_attr(feature = "debug", derive(Debug))]
+pub struct YieldExpression {
+    pub argument: Box<Option<Expression>>,
+    pub delegate: bool,
+}
+#[cfg_attr(feature = "debug", derive(Debug))]
+pub enum TemplateExpression {
+    Normal(Template),
+    Tagged(TaggedTemplateExpression),
+}
+#[cfg_attr(feature = "debug", derive(Debug))]
+pub struct MetaProperty {
+    pub meta: Identifier,
+    pub property: Identifier,
+}
+#[cfg_attr(feature = "debug", derive(Debug))]
+pub struct AwaitExpression {
+    pub argument: Box<Expression>,
 }

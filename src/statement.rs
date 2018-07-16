@@ -28,6 +28,7 @@ pub enum StatementData {
     DoWhile(DoWhile),
     For(For),
     ForIn(ForIn),
+    ForOf(ForOf),
     Declaration(Declaration)
 }
 #[cfg_attr(feature = "debug", derive(Debug))]
@@ -36,9 +37,8 @@ pub struct Directive {
     pub directive: String,
 } 
 #[cfg_attr(feature = "debug", derive(Debug))]
-pub enum Block {
-    Plain(Vec<Statement>),
-    Function(Vec<Statement>, Vec<Statement>)
+pub struct Block {
+    pub body: Vec<Statement>,
 }
 #[cfg_attr(feature = "debug", derive(Debug))]
 pub struct With {
@@ -126,4 +126,11 @@ pub struct ForIn {
 pub enum ForInLeft {
     Var(Declaration),
     Pattern(Pattern),
+}
+#[cfg_attr(feature = "debug", derive(Debug))]
+pub struct ForOf {
+    pub left: ForInLeft,
+    pub right: Expression,
+    pub body: Box<Statement>,
+    pub await: bool,
 }
